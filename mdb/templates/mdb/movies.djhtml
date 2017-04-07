@@ -1,0 +1,49 @@
+{% extends 'mdb/navbar.djhtml' %}
+
+{% block body %}
+
+    <form action="{% url 'mdb:filter' %}" method="post">
+	{% csrf_token %}
+	<select name="watched">
+	    <option value=""> watched? </option>
+	    <option value="True"> yes </option>	
+	    <option value="False"> no </option>
+	</select>
+	
+	<input type="textbox" name="actor"> search by actor
+	&nbsp&nbsp&nbsp	
+	<select name="genre">
+	    <option value="">select</option>
+	    {% for g in genres %}
+		<option value="{{ g }}">{{ g }}</option>
+	    {% endfor %}
+	</select>
+	&nbsp&nbsp&nbsp
+	<input type="submit" value="find!"/>
+    </form>
+
+    <br><br><br>
+    {% for i in movies %}
+	name: {{ i.title }}
+	{% if i.watched %}
+	    <a href="{% url 'mdb:update' i.id %}"> unwatch </a>
+	{% else %}
+	    <a href="{% url 'mdb:update' i.id %}"> watch </a>
+	{% endif %}
+	&nbsp&nbsp&nbsp
+	<a href="{% url 'mdb:delete' i.id %}"> delete </a>
+	<br>
+	actors: <br>
+	{% for a in i.actors.all %}
+	    &nbsp&nbsp&nbsp&nbsp {{ a }} <br>
+	{% endfor %}
+	genres: <br>
+	{% for a in i.genres.all %}
+	    &nbsp&nbsp&nbsp&nbsp {{ a }} <br>
+	{% endfor %}
+	time when added to watchlist: {{ i.time_added }}
+	<br>
+	<br>
+    {% endfor %}
+
+{% endblock %}

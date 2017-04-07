@@ -1,0 +1,8 @@
+
+
+<a href="{% url 'mdb:index' %}"> search </a>
+&nbsp&nbsp&nbsp&nbsp
+<a href="{% url 'mdb:watchlist' %}"> watchlist </a>
+<br><br>
+
+{% block body %} {% endblock %}

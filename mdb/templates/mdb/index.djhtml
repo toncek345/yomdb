@@ -1,0 +1,13 @@
+
+{% extends 'mdb/navbar.djhtml' %}
+
+{% block body %}
+    <p> movie search </p>
+
+    <form action="{% url 'mdb:showMovies' %}" method="post">
+	{% csrf_token %}
+	<input type="label" name="title">
+	<input type="submit" value="search">
+    </form>
+
+{% endblock %}

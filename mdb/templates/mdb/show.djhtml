@@ -1,0 +1,18 @@
+
+{% extends 'mdb/navbar.djhtml' %}
+
+{% block body %}
+    {% if response == "True" %}
+	{% for i in data %}
+	    {{ i.Title }}
+	    <form action="{% url 'mdb:save' %}" method="post">
+		{% csrf_token %}
+		<input type="hidden" name="title" value="{{i.Title}}">
+		<input type="submit" value="save to watchlist">
+	    </form>
+	    <br>
+	{% endfor %}
+    {% else %}
+	Erorr: {{ data }}
+    {% endif %}
+{% endblock %}
