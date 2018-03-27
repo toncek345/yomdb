@@ -1,18 +1,25 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from django.utils import timezone
 
+from django.http import HttpResponse, \
+    HttpResponseNotFound, \
+    HttpResponseRedirect
+
 from .models import Movie, Actor, Genre
+
+from yomdb.settings import OMDB_KEY
 
 import json
 import requests
 
 
-def getMovies(url):
+def searchMovies(url):
     # returns parsed json of search
-    r = requests.get("http://www.omdbapi.com/?s="+url.replace(" ", "+"))
+    asdf = url.replace(" ", "+")
+    r = requests.get("http://www.omdbapi.com/?apikey={0}&s={1}".format(
+        OMDB_KEY, asdf))
     return json.loads(r.content)
 
 
@@ -20,7 +27,8 @@ def getData(movieName):
     # returnes parsed json for particular movie
     n = movieName.replace(" ", "+")
     n = n.replace(':', '%3A')
-    r = requests.get("http://www.omdbapi.com/?t="+n)
+    r = requests.get("http://www.omdbapi.com/?apikey={0}&t={1}".format(
+        OMDB_KEY, n))
     return json.loads(r.content)
 
 
@@ -34,15 +42,12 @@ def showMovies(request):
         return HttpResponseNotFound("wrong url, wrong request")
 
     movieStr = request.POST["title"]
-    data = getMovies(movieStr)
+    data = searchMovies(movieStr)
     if not data["Response"]:
         return HttpResponse(request, "api went wrong")
 
     if data["Response"] != "True":
-        context = {
-            'response': data["Response"],
-            'data': data["Error"]
-        }
+        context = {'response': data["Response"], 'data': data["Error"]}
     else:
         context = {
             'response': data["Response"],
@@ -86,9 +91,10 @@ def save(request):
 
 def showWatchlist(request):
     # returnes all movies in watchlist
-    return render(request, 'mdb/movies.djhtml',
-                  {'movies': Movie.objects.all(),
-                   'genre': Genre.objects.all()})
+    return render(request, 'mdb/movies.djhtml', {
+        'movies': Movie.objects.all(),
+        'genre': Genre.objects.all()
+    })
 
 
 def update(request, pk):
@@ -124,9 +130,10 @@ def filters(request):
     if request.POST["genre"] != "":
         m = m.filter(genres__genre_text__exact=request.POST["genre"])
 
-    return render(request, 'mdb/movies.djhtml',
-                  {'movies': m,
-                   'genres': Genre.objects.all()})
+    return render(request, 'mdb/movies.djhtml', {
+        'movies': m,
+        'genres': Genre.objects.all()
+    })
 
 
 def strToBool(string):
