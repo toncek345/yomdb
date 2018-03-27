@@ -27,9 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '0.0.0.0',
-    '78.1.172.216',
-    '10.15.5.98',
-    '127.0.0.1',
 ]
 
 
@@ -128,3 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# omdb api key
+OMDB_KEY = ''
